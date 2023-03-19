@@ -1,7 +1,8 @@
 import React, { FC } from 'react';
 
 const CLIENT_ID = '7d728f699502436a87df8a7630fd4fdf';
-const REDIRECT_URI = 'https://onemusic.netlify.app/callback';
+const REDIRECT_URI = 'https://one-music-six.vercel.app/callback';
+// const REDIRECT_URI = 'http://localhost:3000/callback';
 const SCOPES = 'user-read-private user-read-email';
 
 const handleLogin = () => {
