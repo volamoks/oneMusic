@@ -1,8 +1,22 @@
-import React from 'react';
+import React, { FC } from 'react';
 
 import { Link } from 'react-router-dom';
 
-const SongsLongCard = ({ imgUrl, title, subtitile, id }) => {
+interface ISongLogcard {
+    imgUrl: string;
+    title: string;
+    subtitile: string;
+    id: string;
+    i: number;
+}
+const SongsLongCard: FC<ISongLogcard> = ({
+    imgUrl,
+    title,
+    subtitile,
+    id,
+    i,
+}) => {
+    console.log('SongsLongCard');
     return (
         <div className="flex-1 flex flex-row justify-between items-center ">
             <img

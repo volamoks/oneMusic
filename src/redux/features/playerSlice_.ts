@@ -1,57 +1,33 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { I_activeSong } from '../../components/types/types';
+import { Item } from '../../types/spotify/albumsTypes';
+import { commonIitem, commonIitems } from '../../types/spotify/commonTypes';
 
 interface I_initState {
-    currentSongs: I_currentSongs;
+    currentSongs: Item[];
     currentIndex: number;
     isActive: boolean;
     isPlaying: boolean;
-    activeSong: I_activeSong;
-    genreListId: string;
-
-    access_token: string;
+    activeSong: Item | null;
     playlistId: string;
-
     discoverPage: boolean;
+    favorites: string[] | null;
     searchQuery: {
         queryList: string;
         dataQuery: {};
     };
-    artistData: {
-        atristSelectedAlbum: string;
-        artistsQuery: { artists: I_artists[] };
-    };
 }
 const initialState: I_initState = {
-    currentSongs: {
-        tracks: {
-            items: [],
-            i: 0,
-        },
-        i: 0,
-    },
+    currentSongs: [],
     currentIndex: 0,
     isActive: false,
     isPlaying: false,
-    activeSong: {
-        id: '',
-        preview_url: '',
-        name: '',
-        album: [],
-        artists: [],
-    },
-    genreListId: '',
-    access_token: '',
+    activeSong: null,
     playlistId: '',
-
     discoverPage: false,
+    favorites: JSON.parse(localStorage.getItem('favtracks') || '[]'),
     searchQuery: {
         queryList: '',
         dataQuery: {},
-    },
-    artistData: {
-        atristSelectedAlbum: '',
-        artistsQuery: { artists: [] },
     },
 };
 
@@ -61,11 +37,18 @@ const playerSlice = createSlice({
     reducers: {
         setActiveSong: (
             state,
-            action: PayloadAction<{ track: I_activeSong; i: number }>,
+            action: PayloadAction<{
+                track: commonIitem;
+                data: commonIitems;
+                i: number;
+            }>,
         ) => {
-            state.activeSong = action.payload.track;
-            state.currentIndex = action.payload.i;
-            state.currentSongs = action.payload.data;
+            if (action.payload) {
+                state.activeSong = action.payload.track;
+                state.currentIndex = action.payload.i;
+                state.currentSongs = action.payload.data;
+                state.isActive = true;
+            } else return state;
         },
 
         nextSong: (state, action: PayloadAction<number>) => {
@@ -78,23 +61,25 @@ const playerSlice = createSlice({
             state.isPlaying = true;
         },
 
-        prevSong: (state, action: PayloadAction<number>) => {
-            if (state.currentSongs[action.payload]?.track) {
-                state.activeSong = state.currentSongs[action.payload];
-            }
+        prevSong: (state, action: PayloadAction<number | undefined>) => {
+            if (action.payload) {
+                if (state.currentSongs[action.payload]) {
+                    state.activeSong = state.currentSongs[action.payload];
+                }
 
-            state.currentIndex = action.payload;
-            state.isActive = true;
-            state.isPlaying = true;
+                state.currentIndex = action.payload;
+                state.isActive = true;
+                state.isPlaying = true;
+            } else return state;
         },
 
         playPause: (state, action: PayloadAction<boolean>) => {
             state.isPlaying = action.payload;
         },
 
-        selectGenreListId: (state, action: PayloadAction<string>) => {
-            state.genreListId = action.payload;
-        },
+        // selectGenreListId: (state, action: PayloadAction<string>) => {
+        //     state.genreListId = action.payload;
+        // },
 
         setPlaylist: (state, action: PayloadAction<string>) => {
             state.playlistId = action.payload;
@@ -104,22 +89,31 @@ const playerSlice = createSlice({
             state.discoverPage = true;
         },
 
-        setArtistsQuery: (
-            state,
-            action: PayloadAction<{ artists: I_artists[] }>,
-        ) => {
-            state.artistData.artistsQuery = action.payload;
+        setFavorites: (state, action: PayloadAction<string>) => {
+            if (state.favorites) {
+                state.favorites = state.favorites.includes(action.payload)
+                    ? state.favorites.filter(id => id !== action.payload)
+                    : [...state.favorites, action.payload];
+            }
+            return state;
         },
 
-        setAlbum: (state, action: PayloadAction<string>) => {
-            state.artistData.atristSelectedAlbum = action.payload;
+        // setArtistsQuery: (
+        //     state,
+        //     action: PayloadAction<IArtists | undefined>,
+        // ) => {
+        //     if (action.payload) state.artistData.artistsQuery = action.payload;
+        // },
+
+        // setAlbum: (state, action: PayloadAction<string>) => {
+        //     state.artistData.atristSelectedAlbum = action.payload;
+        // },
+        setSearchQuery: (state, action: PayloadAction<string>) => {
+            state.searchQuery.queryList = action.payload;
         },
-        // setSearchQuery: (state, action: PayloadAction<string>) => {
-        //     state.searchQuery.queryList = action.payload;
-        // },
-        // setSearchData: (state, action) => {
-        //     state.searchQuery.dataQuery = action.payload;
-        // },
+        setSearchData: (state, action) => {
+            state.searchQuery.dataQuery = action.payload;
+        },
     },
 });
 
@@ -128,13 +122,16 @@ export const {
     nextSong,
     prevSong,
     playPause,
-    selectGenreListId,
+    // selectGenreListId,
     setPlaylist,
     // setArtistsQuery,
     setDiscover,
-    setAlbum,
-    // setSearchQuery,
-    // setSearchData,
+    // setAlbum,
+    setSearchQuery,
+    setSearchData,
+    setFavorites,
 } = playerSlice.actions;
+
+export const userActions = playerSlice.actions;
 
 export default playerSlice.reducer;

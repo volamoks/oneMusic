@@ -4,8 +4,8 @@ import playerReducer from './features/playerSlice_';
 import { spotifyApi } from './services/spotifyApi';
 
 const rootReducer = combineReducers({
-    player: playerReducer,
     [spotifyApi.reducerPath]: spotifyApi.reducer,
+    player: playerReducer,
 });
 
 export const setupStore = () => {

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { I_activeSong, I_artists, I_track } from './types/types';
-import React from 'react';
+import React, { FC } from 'react';
 
 interface I_DetailsHeader {
     artistId: string;
@@ -8,14 +8,14 @@ interface I_DetailsHeader {
     songData: I_activeSong;
 }
 
-const DetailsHeader = ({
+const DetailsHeader: FC<I_DetailsHeader> = ({
     artistId,
     artistData,
     songData,
-}: I_DetailsHeader): React.ReactNode => {
+}) => {
     const artist = artistData?.artists[artistId].attributes;
 
-    console.log(artistId, artistData, songData);
+    // console.log(artistId, artistData, songData);
 
     return (
         <div className="relative w-full flex flex-col">

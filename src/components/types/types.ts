@@ -9,7 +9,9 @@ interface I_images {
     width: number;
 }
 
-export interface I_artists extends I_baseData {}
+export interface I_artists extends I_baseData {
+    images: I_images[];
+}
 
 export interface I_album extends I_baseData {
     artists: I_artists[];
@@ -42,7 +44,7 @@ export interface I_albumResponse extends I_baseData {
 }
 
 export interface I_artist_response extends I_baseData {
-    atists: I_artists[];
+    artists: I_artists[];
     tracks: { items: I_activeSong[] };
     album: I_album;
     images: I_images[];

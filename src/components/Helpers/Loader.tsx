@@ -1,6 +1,11 @@
-import { loader } from '../assets';
+import React, { FC } from 'react';
+import { loader } from '../../assets/';
 
-const Loader = ({ title }) => (
+interface Iloader {
+    text: string;
+}
+
+const Loader: FC<Iloader> = ({ text }) => (
     <div className="w-full flex justify-center items-center flex-col">
         <img
             className="w-34 h32 object-contain"
@@ -8,7 +13,7 @@ const Loader = ({ title }) => (
             alt="loader"
         />
         <h1 className="font-bold text-2xl mt-2 text-white">
-            {title || 'Loading'}
+            {text || 'Loading'}
         </h1>
     </div>
 );

@@ -1,4 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { IFeaturedPlaylist } from '../../types/spotify/featuredPlaylistTypes';
+import { IPlaylist } from '../../types/spotify/playlistsTypes';
+import { ISearch } from '../../types/spotify/searchTypes';
+import { ITracks } from '../../types/spotify/tracks';
+import { IArtists } from './../../types/spotify/atristsTypes';
+import { IALbum } from './../../types/spotify/albumsTypes';
+import { IArtistAlbum } from '../../types/spotify/artistAlbums';
 
 const SPOTIFY_BASE_URL = 'https://api.spotify.com';
 
@@ -16,7 +23,7 @@ export const spotifyApi = createApi({
         },
     }),
     endpoints: builder => ({
-        getPlaylist: builder.query({
+        getPlaylist: builder.query<IPlaylist, string>({
             query: playlistId => ({
                 url: `/v1/playlists/${playlistId}`,
             }),
@@ -25,39 +32,36 @@ export const spotifyApi = createApi({
         getArtist: builder.query({
             query: artistId => `/v1/artists/3vvLuXEEf7sl3izJcw0GIn`,
         }),
-        getAlbum: builder.query({
+
+        getAlbums: builder.query<IALbum, string>({
             query: albumId => ({
-                url: `/v1/albums/${albumId}`,
-                // url: `/v1/albums/4aawyAB9vmqN3uQ7FjRGTy`,
+                url: `/v1/albums`,
+                params: { ids: albumId },
             }),
         }),
-        getSeveralArtists: builder.query({
+        getSeveralArtists: builder.query<IArtists, string | undefined>({
             query: artistsList => ({
                 url: `/v1/artists`,
                 params: { ids: artistsList },
             }),
         }),
-        getTracks: builder.query({
-            query: trackid => ({
+        getTracks: builder.query<ITracks, string | undefined>({
+            query: trackids => ({
                 url: `/v1/tracks`,
-                params: { ids: trackid },
+                params: { ids: trackids },
             }),
         }),
-        getTrack: builder.query({
-            query: () =>
-                `https://api.spotify.com/v1/tracks/2qxmye6gAegTMjLKEBoR3d`,
-        }),
-        getFeaturedPlaylists: builder.query({
+
+        getFeaturedPlaylists: builder.query<IFeaturedPlaylist, any>({
             query: () => '/v1/browse/featured-playlists?limit=20&offset=0',
         }),
 
-        getArtistData: builder.query({
+        getArtistAlbums: builder.query<IArtistAlbum, string>({
             query: artistID => ({
                 url: `/v1/artists/${artistID}`,
-                // url: `/v1/artists/0TnOYISbd1XYRBk9myaseg/top-tracks`,
             }),
         }),
-        getSearchForItem: builder.query({
+        getSearchForItem: builder.query<ISearch, string>({
             query: searchQuery => ({
                 url: `/v1/search?q=${searchQuery}&type=album,artist,track`,
             }),
@@ -65,13 +69,12 @@ export const spotifyApi = createApi({
     }),
 });
 export const {
-    useGetArtistQuery,
-    useGetTrackQuery,
+    // useGetTrackQuery,
     useGetTracksQuery,
     useGetPlaylistQuery,
     useGetFeaturedPlaylistsQuery,
     useGetSeveralArtistsQuery,
-    useGetArtistDataQuery,
-    useGetAlbumQuery,
+    useGetArtistAlbumsQuery,
+    useGetAlbumsQuery,
     useGetSearchForItemQuery,
 } = spotifyApi;

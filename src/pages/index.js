@@ -2,19 +2,17 @@ import Discover from './Discover';
 import TopArtists from './TopArtists';
 import ArtistDetails from './ArtistDetails';
 
-import Search from './Search';
 import TopCharts from './TopCharts';
-import AroundYou from './AroundYou';
+import Favorites from './Favorites';
 import AlbumDetails from './AlbumDetails';
-import Callback from '../components/Callback';
+import Callback from '../components/Helpers/Callback';
 
 export {
     Discover,
-    Search,
     TopArtists,
     ArtistDetails,
     TopCharts,
-    AroundYou,
+    Favorites,
     AlbumDetails,
     Callback,
 };

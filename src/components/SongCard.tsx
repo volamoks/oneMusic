@@ -1,30 +1,35 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux/';
-import { playPause, setActiveSong } from '../redux/features/playerSlice';
-import PlayPause from './PlayPause';
-import { I_tracks } from './types/types';
-import { useAppSelector } from '../redux/hooks/redux';
-import React from 'react';
 
-interface I_SongCard {
+import PlayPause from './MusicPlayer/PlayPause';
+
+import { useAppSelector } from '../redux/hooks/redux';
+import React, { FC } from 'react';
+
+import { commonIitems } from '../types/spotify/commonTypes';
+import { commonIitem } from '../types/spotify/commonTypes';
+
+import { AiOutlineHeart } from 'react-icons/ai';
+import { useActions } from './../redux/hooks/useActions';
+
+interface IsongCard {
     id: string;
-    track?: I_tracks;
-    i: number;
-    data?: I_tracks[];
+    track?: commonIitem;
+    i?: number | undefined;
+    data?: commonIitems;
     imgUrl: string;
-    title?: string;
-    subtitle?: string;
+    title: string;
+    pageLink?: string | undefined;
     titleid?: string;
-    isAlbum: boolean;
+    isAlbum?: boolean;
+    subtitle?: string;
     date?: string;
-    pageLink?: string;
-    onClick?: any;
+    isHeart?: boolean;
 }
 
-const SongCard = ({
-    id,
+const SongCard: FC<IsongCard> = ({
     track,
-    i,
+    i = 0,
+    isHeart = true,
     data,
     imgUrl,
     title,
@@ -33,14 +38,20 @@ const SongCard = ({
     isAlbum = false,
     subtitle,
     date,
-}: I_SongCard): React.ReactElement => {
-    const { activeSong } = useAppSelector(state => state.player);
-
+}) => {
+    const { activeSong, favorites } = useAppSelector(state => state.player);
+    const { setFavorites } = useActions();
     const navigate = useNavigate();
 
     const linkToPage = (id: string | undefined) => {
         navigate(`${id}`);
     };
+
+    const handleAddFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
+        const trackId = e.currentTarget.value;
+        setFavorites(trackId);
+    };
+    localStorage.setItem('favtracks', JSON.stringify(favorites));
 
     return (
         <div className="flex flex-col w-[250px] p-4 bg-white/5 bg-opacity-80 backdrop-blur-sm animate-slideup rounded-lg cursor-pointer">
@@ -52,7 +63,7 @@ const SongCard = ({
                             : 'hidden'
                     }`}
                 >
-                    {!isAlbum ? (
+                    {!isAlbum && track && data ? (
                         <PlayPause
                             track={track}
                             data={data}
@@ -61,27 +72,49 @@ const SongCard = ({
                     ) : null}
                 </div>
                 <img
-                    className=""
+                    className="object-cover"
                     src={imgUrl}
                     alt="song_img"
                 />
             </div>
-            <div
-                onClick={() => linkToPage(pageLink)}
-                className="flex flex-col"
-            >
-                <p className="font-semibold text-2xl text-white truncate">
-                    {title}
-                </p>
-                <p className="font-semibold text-lg text-white truncate">
-                    {subtitle}
-                </p>
+            <div className="flex flex-row justify-between  w-[216px]">
+                <div
+                    onClick={() => linkToPage(pageLink)}
+                    className="flex flex-col w-5/6"
+                >
+                    <p className="font-semibold text-xl text-white truncate ">
+                        {title}
+                    </p>
+                    <p className="font-semibold text-base text-white truncate">
+                        {subtitle}
+                    </p>
 
-                <p className="font-sm  text-gray-300 truncate mt-1">
-                    <Link to={titleid ? `/artist/${titleid}` : 'top/atrist'}>
-                        {date}
-                    </Link>
-                </p>
+                    <p className="font-sm  text-gray-300 truncate mt-1">
+                        <Link
+                            to={titleid ? `/artist/${titleid}` : 'top/atrist'}
+                        >
+                            {date}
+                        </Link>
+                    </p>
+                </div>
+                {isHeart ? (
+                    <div className="flex items-center w-1/6 z-10">
+                        <button
+                            value={track?.id}
+                            onClick={handleAddFavorites}
+                        >
+                            <AiOutlineHeart
+                                size={30}
+                                color={
+                                    track?.id && favorites?.includes(track?.id)
+                                        ? 'red'
+                                        : '#FFF'
+                                }
+                                className="cursor-pointer "
+                            />
+                        </button>
+                    </div>
+                ) : null}
             </div>
         </div>
     );

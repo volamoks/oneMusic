@@ -5,13 +5,13 @@ import { Searchbar, Sidebar, MusicPlayer, TopPlay } from './components';
 import {
     ArtistDetails,
     TopArtists,
-    AroundYou,
     Discover,
-    Search,
     TopCharts,
     AlbumDetails,
+    Favorites,
     Callback,
 } from './pages';
+
 import FeaturedPlaylists from './pages/FeaturedPlaylists';
 
 const App = () => {
@@ -59,7 +59,7 @@ const App = () => {
                             />
                             <Route
                                 path="/around-you"
-                                element={<AroundYou />}
+                                element={<Favorites />}
                             />
                             <Route
                                 path="/artists/:id"
@@ -68,15 +68,6 @@ const App = () => {
                             <Route
                                 path="/artists/:id/albums/:albumid"
                                 element={<AlbumDetails />}
-                            />
-                            {/* <Route
-                                path="/songs/:songid"
-                                element={<SongDetails />}
-                            /> */}
-
-                            <Route
-                                path="/search/:searchTerm"
-                                element={<Search />}
                             />
                         </Routes>
                     </div>
